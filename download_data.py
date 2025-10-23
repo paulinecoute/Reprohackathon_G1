@@ -1,5 +1,5 @@
 # Pauline : fasterq-dump via Homebrew
-# Téléchargement des données en parallèle pour diviser le temps par 6
+# Téléchargement des données en parallèle pour réduire le temps 
 import os
 import subprocess
 import glob
