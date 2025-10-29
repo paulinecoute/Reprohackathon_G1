@@ -1,0 +1,25 @@
+# Use a minimal, modern base image
+FROM debian:bullseye-slim
+
+LABEL maintainer="Your Name <you@example.com>" \
+      description="Docker image for featureCounts v1.4.6-p3 from the Subread package."
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install essential tools (wget, tar, gzip, dependencies)
+RUN apt-get update && \
+    apt-get install -y wget gzip tar build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
+# Download and install Subread v1.4.6-p3 (contains featureCounts)
+WORKDIR /opt
+RUN wget -q https://downloads.sourceforge.net/project/subread/subread-1.4.6-p3/subread-1.4.6-p3-Linux-x86_64.tar.gz && \
+    tar -xzf subread-1.4.6-p3-Linux-x86_64.tar.gz && \
+    cp subread-1.4.6-p3-Linux-x86_64/bin/featureCounts /usr/local/bin/ && \
+    rm -rf subread-1.4.6-p3*
+
+# Set up working directory
+WORKDIR /data
+
+# Default entrypoint for interactive use
+ENTRYPOINT ["/bin/bash", "-c"]
