@@ -30,4 +30,4 @@ RUN wget https://github.com/FelixKrueger/TrimGalore/archive/0.6.7.zip && \
 WORKDIR /data
 
 # Default entrypoint: Trim Galore
-ENTRYPOINT ["trim_galore"]
+ENTRYPOINT ["/bin/bash", "-c"]

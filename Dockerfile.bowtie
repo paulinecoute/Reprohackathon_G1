@@ -6,8 +6,8 @@ LABEL maintainer="Your Name <you@example.com>" \
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install essential tools
-RUN apt-get update && apt-get install -y wget unzip && \
+# Install required tools
+RUN apt-get update && apt-get install -y wget unzip samtools gzip && \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install precompiled Bowtie 0.12.7 binaries
@@ -21,4 +21,4 @@ RUN wget -q https://downloads.sourceforge.net/project/bowtie-bio/bowtie/0.12.7/b
 WORKDIR /data
 
 # Default command: build a Bowtie index
-ENTRYPOINT ["bowtie-build"]
+ENTRYPOINT ["/bin/bash", "-c"]
