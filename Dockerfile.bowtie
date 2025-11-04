@@ -1,9 +1,6 @@
 # Use a modern, minimal base image
 FROM debian:bullseye-slim
 
-LABEL maintainer="Your Name <you@example.com>" \
-      description="Docker image for Bowtie v0.12.7 using precompiled binaries and reference genome CP000253.1."
-
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install required tools
@@ -16,9 +13,6 @@ RUN wget -q https://downloads.sourceforge.net/project/bowtie-bio/bowtie/0.12.7/b
     unzip bowtie-0.12.7-linux-x86_64.zip && \
     cp bowtie-0.12.7/bowtie* /usr/local/bin/ && \
     rm -rf bowtie-0.12.7* 
-
-# Create working directory for your data
-WORKDIR /data
 
 # Default command: build a Bowtie index
 ENTRYPOINT ["/bin/bash", "-c"]

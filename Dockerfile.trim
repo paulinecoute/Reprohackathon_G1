@@ -1,9 +1,6 @@
 # Use an older base image compatible with Python 3.6
 FROM ubuntu:18.04
 
-LABEL maintainer="Your Name <you@example.com>" \
-      description="Docker image for trimming RNA-seq reads using Trim Galore and Cutadapt v1.11."
-
 # Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -25,9 +22,6 @@ RUN wget https://github.com/FelixKrueger/TrimGalore/archive/0.6.7.zip && \
     mv TrimGalore-0.6.7 /opt/trim_galore && \
     ln -s /opt/trim_galore/trim_galore /usr/local/bin/trim_galore && \
     rm 0.6.7.zip
-
-# Working directory where data will be mounted
-WORKDIR /data
 
 # Default entrypoint: Trim Galore
 ENTRYPOINT ["/bin/bash", "-c"]
