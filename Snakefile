@@ -65,6 +65,9 @@ rule download_reference:
         wget -q -O reference.gff "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1"
         echo "Reference genome and annotations downloaded"
         """
+        # utiliser plutôt
+        # wget -O reference.fasta "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000253.1&rettype=fasta&retmode=text"
+        # wget -O reference.gff "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&id=CP000253.1&report=gff3&format=text"
 
 # Étape 4 : Création de l'index du génome
 # DOCKERFILE A CREER
@@ -121,10 +124,11 @@ rule count_reads:
         r"""
         mkdir -p {count_directory}
         cd {count_directory}
-        featureCounts --extraAttributes Name -t gene -g ID -F GTF \
+        featureCounts --extraAttributes Name -t gene -g ID -F GTF \ 
             -T {params.threads} -a ../{input.gff} \
             -o counts.txt ../{mapping_directory}/*.bam
         echo "Read counting finished, results saved in {count_directory}/counts.txt"
         """
+        # supprimer "--extraAttributes Name"
 
 
