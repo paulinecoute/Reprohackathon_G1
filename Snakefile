@@ -6,20 +6,22 @@ rule build_docker_base:
         "mkdir -p images && docker build -t docker:base -f Dockerfile . && touch {output}"
 
 rule build_docker_bowtie:
+    input: "images/docker_base_built"
     output: "images/docker_bowtie_built"
     shell:
         "mkdir -p images && docker build -t docker:bowtie -f Dockerfile.bowtie . && touch {output}"
 
 rule build_docker_trim:
+    input: "images/docker_bowtie_built"
     output: "images/docker_trim_built"
     shell:
         "mkdir -p images && docker build -t docker:trim -f Dockerfile.trim . && touch {output}"
 
 rule build_docker_featurecounts:
+    input: "images/docker_trim_built"
     output: "images/docker_featurecounts_built"
     shell:
         "mkdir -p images && docker build -t docker:featurecounts -f Dockerfile.featurecounts . && touch {output}"
-
 
 # Fichiers FASTQ (run)
 SRR = ["SRR10379721", "SRR10379722", "SRR10379723","SRR10379724", "SRR10379725", "SRR10379726"]
@@ -34,6 +36,7 @@ count_directory = "data_counts"
 rule all:
     input:
         f"{count_directory}/counts.txt"
+
 
 # Étape 1 : Téléchargement et compression des fichiers fastq 
 
