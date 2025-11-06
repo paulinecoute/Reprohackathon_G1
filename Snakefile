@@ -1,4 +1,25 @@
-# Étape 0 
+# Étape 0 : Initialisation, Construction des images etc
+
+rule build_docker_base:
+    output: "images/docker_base_built"
+    shell:
+        "mkdir -p images && docker build -t docker:base -f Dockerfile . && touch {output}"
+
+rule build_docker_bowtie:
+    output: "images/docker_bowtie_built"
+    shell:
+        "mkdir -p images && docker build -t docker:bowtie -f Dockerfile.bowtie . && touch {output}"
+
+rule build_docker_trim:
+    output: "images/docker_trim_built"
+    shell:
+        "mkdir -p images && docker build -t docker:trim -f Dockerfile.trim . && touch {output}"
+
+rule build_docker_featurecounts:
+    output: "images/docker_featurecounts_built"
+    shell:
+        "mkdir -p images && docker build -t docker:featurecounts -f Dockerfile.featurecounts . && touch {output}"
+
 
 # Fichiers FASTQ (run)
 SRR = ["SRR10379721", "SRR10379722", "SRR10379723","SRR10379724", "SRR10379725", "SRR10379726"]
@@ -15,13 +36,16 @@ rule all:
         f"{count_directory}/counts.txt"
 
 # Étape 1 : Téléchargement et compression des fichiers fastq 
-# dockerfile sra-toolkits
 
 rule download_and_compress:
+    input:
+        "images/docker_base_built"
     output:
         f"{raw_directory}/{{srr}}.fastq.gz"
     params:
         threads = 4
+    container:
+        "docker://docker:base"
     shell:
         r"""
         mkdir -p {raw_directory}
@@ -32,16 +56,18 @@ rule download_and_compress:
         """
 
 # Étape 2 : Trimming
-# dockerfile trimming
 
 rule trim_reads:
     input:
-        f"{raw_directory}/{{srr}}.fastq.gz"
+        fastq = f"{raw_directory}/{{srr}}.fastq.gz",
+        docker = "images/docker_trim_built"
     output:
         f"{trimmed_directory}/{{srr}}_trimmed.fq.gz"
     params:
         quality = 20,
         length = 25
+    container:
+        "docker://docker:trim"
     shell:
         r"""
         mkdir -p {trimmed_directory}
@@ -70,13 +96,16 @@ rule download_reference:
         # wget -O reference.gff "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&id=CP000253.1&report=gff3&format=text"
 
 # Étape 4 : Création de l'index du génome
-# DOCKERFILE A CREER
 
 rule build_index:
     input:
-        f"{reference_directory}/reference.fasta"
+        f"{reference_directory}/reference.fasta",
+        docker = "images/docker_bowtie_built"
+
     output:
         f"{reference_directory}/reference.1.bt2"
+    container:
+        "docker://docker:bowtie"
     params:
         index_name = f"{reference_directory}/reference"
     shell:
@@ -87,18 +116,21 @@ rule build_index:
         """
 
 # Étape 5 : Mapping
-# DOCKERFILE A CREER
+# meme counteneur que index genome
 
 rule mapping:
     input:
         fastq = f"{trimmed_directory}/{{srr}}_trimmed.fq.gz",
-        index = f"{reference_directory}/reference.1.bt2"
+        index = f"{reference_directory}/reference.1.bt2",
+	    docker = "images/docker_bowtie_built"
     output:
         bam = f"{mapping_directory}/{{srr}}.bam",
         bai = f"{mapping_directory}/{{srr}}.bam.bai"
     params:
         threads = 4,
         index_name = f"{reference_directory}/reference"
+    container:
+        "docker://docker:bowtie"
     shell:
         r"""
         mkdir -p {mapping_directory}
@@ -110,25 +142,27 @@ rule mapping:
         """
 
 # Étape 6 : Comptage des reads
-# DOCKERFILE A CREER
 
 rule count_reads:
     input:
         gff = f"{reference_directory}/reference.gff",
-        bam = expand(f"{mapping_directory}/{{srr}}.bam", srr=SRR)
+        bam = expand(f"{mapping_directory}/{{srr}}.bam", srr=SRR),
+	    docker = "images/docker_featurecounts_built"
     output:
         f"{count_directory}/counts.txt"
     params:
         threads = 4
+    container:
+        "docker://docker:featurecounts"
     shell:
         r"""
         mkdir -p {count_directory}
         cd {count_directory}
-        featureCounts --extraAttributes Name -t gene -g ID -F GTF \ 
+        featureCounts -t gene -g ID -F GTF \
             -T {params.threads} -a ../{input.gff} \
             -o counts.txt ../{mapping_directory}/*.bam
         echo "Read counting finished, results saved in {count_directory}/counts.txt"
         """
         # supprimer "--extraAttributes Name"
-
+        # ancinnement featureCounts --extraAttributes Name -t gene -g ID -F GTF\ 
 
