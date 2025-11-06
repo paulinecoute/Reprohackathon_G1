@@ -122,7 +122,7 @@ rule mapping:
     input:
         fastq = f"{trimmed_directory}/{{srr}}_trimmed.fq.gz",
         index = f"{reference_directory}/reference.1.bt2",
-	    docker = "images/docker_bowtie_built"
+        docker = "images/docker_bowtie_built"
     output:
         bam = f"{mapping_directory}/{{srr}}.bam",
         bai = f"{mapping_directory}/{{srr}}.bam.bai"
@@ -147,7 +147,7 @@ rule count_reads:
     input:
         gff = f"{reference_directory}/reference.gff",
         bam = expand(f"{mapping_directory}/{{srr}}.bam", srr=SRR),
-	    docker = "images/docker_featurecounts_built"
+        docker = "images/docker_featurecounts_built"
     output:
         f"{count_directory}/counts.txt"
     params:
