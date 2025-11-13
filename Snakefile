@@ -23,7 +23,7 @@ rule download_and_compress:
     output: f"{raw_directory}/{{srr}}.fastq.gz"
     params: threads = 4
     wildcard_constraints: srr="SRR[0-9]+"
-    container: "docker:base"
+    container: "docker://paulinecoute/base:latest"
     shell:
         r"""
         mkdir -p {raw_directory}
@@ -43,7 +43,7 @@ rule trim_reads:
     params:
         quality = 20, length = 25
     wildcard_constraints: srr="SRR[0-9]+"
-    container: "docker:trim"
+    container: "docker://paulinecoute/trim:latest"
     shell:
         r"""
         mkdir -p {trimmed_directory}
@@ -58,7 +58,7 @@ rule download_reference:
     output:
         fasta = f"{reference_directory}/reference.fasta",
         gff = f"{reference_directory}/reference.gff"
-    container: "docker:base"
+    container: "docker://paulinecoute/base:latest"
     shell:
         r"""
         mkdir -p {reference_directory}
@@ -74,17 +74,17 @@ rule build_index:
     input:
         fasta = f"{reference_directory}/reference.fasta"
     output:
-        f"{reference_directory}/reference.1.bt2"
-    container: "docker:bowtie"
+        f"{reference_directory}/reference.1.ebwt"
+    container: "docker://paulinecoute/bowtie:latest"
     shell:
-        "bowtie-build {input.fasta} {reference_directory}/reference"
+        "cd {reference_directory} && bowtie-build reference.fasta reference"
 
 # Cinquième étape : mapping
 # Docker.bowtie (c'est le même que pour celui d'avant)
 rule mapping:
     input:
         fastq = f"{trimmed_directory}/{{srr}}_trimmed.fq.gz",
-        index = f"{reference_directory}/reference.1.bt2"
+        index = f"{reference_directory}/reference.1.ebwt"
     output:
         bam = f"{mapping_directory}/{{srr}}.bam",
         bai = f"{mapping_directory}/{{srr}}.bam.bai"
@@ -92,7 +92,7 @@ rule mapping:
         threads = 4,
         index_name = f"{reference_directory}/reference"
     wildcard_constraints: srr="SRR[0-9]+"
-    container: "docker:bowtie"
+    container: "docker://paulinecoute/bowtie:latest"
     shell:
         r"""
         mkdir -p {mapping_directory}
@@ -111,10 +111,10 @@ rule count_reads:
     output:
         f"{count_directory}/counts.txt"
     params: threads = 4
-    container: "docker:featurecounts"
+    container: "docker://paulinecoute/featurecounts:latest"
     shell:
         r"""
         mkdir -p {count_directory}
-        featureCounts -t gene -g ID -F GTF -T {params.threads} \
+        featureCounts -t gene -g ID -F GFF -T {params.threads} \
             -a {input.gff} -o {output} {mapping_directory}/*.bam
         """
