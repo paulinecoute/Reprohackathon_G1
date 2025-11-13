@@ -1,8 +1,6 @@
 # Image R + tidyverse déjà installés
 FROM rocker/tidyverse:4.3.2
 
-LABEL maintainer="votre_nom <votre_email@exemple.com>"
-
 # Installer dépendances système pour Bioconductor
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libxml2-dev libssl-dev libcurl4-openssl-dev \
