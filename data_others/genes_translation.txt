@@ -1,6 +1,6 @@
-########## https://www.kegg.jp/kegg-bin/show_organism?menu_type=gene_catalogs&org=sao
-########## 03011 (Ribosome) 03009 (Ribosome biogenesis) 03016 (Transfer RNA biogenesis) 03012 (Translation factors)
-########## ATTENTION, je n'ai pas encore eu le temps mais ici il ne faut conserver que les lignes qui commencent par SAOUHSC_ (qui sont les gènes présents dans nos données rnaseq, je m'en occupe dès que je peux)
+# https://www.kegg.jp/kegg-bin/show_organism?menu_type=gene_catalogs&org=sao
+# 03011 (Ribosome) 03009 (Ribosome biogenesis) 03016 (Transfer RNA biogenesis) 03012 (Translation factors)
+# N'ont été conservées que les SAOUHSC_ 
 ##### Ribosomal proteins
 ### Bacteria 
 # Small subunit
@@ -25,27 +25,6 @@ SAOUHSC_00350 rpsR; 30S ribosomal protein S18
 SAOUHSC_02508 rpsS; 30S ribosomal protein S19
 SAOUHSC_01689 rpsT; 30S ribosomal protein S20
 SAOUHSC_01678 rpsU; 30S ribosomal protein S21
-K02945 RP-S1; small subunit ribosomal protein S1
-K02982 RP-S3; small subunit ribosomal protein S3
-K02986 RP-S4; small subunit ribosomal protein S4
-K02988 RP-S5; small subunit ribosomal protein S5
-K02990 RP-S6; small subunit ribosomal protein S6
-K02992 RP-S7; small subunit ribosomal protein S7
-K02994 RP-S8; small subunit ribosomal protein S8
-K02996 RP-S9; small subunit ribosomal protein S9
-K02946 RP-S10; small subunit ribosomal protein S10
-K02948 RP-S11; small subunit ribosomal protein S11
-K02950 RP-S12; small subunit ribosomal protein S12
-K02952 RP-S13; small subunit ribosomal protein S13
-K02954 RP-S14; small subunit ribosomal protein S14
-K02954 RP-S14; small subunit ribosomal protein S14
-K02956 RP-S15; small subunit ribosomal protein S15
-K02959 RP-S16; small subunit ribosomal protein S16
-K02961 RP-S17; small subunit ribosomal protein S17
-K02963 RP-S18; small subunit ribosomal protein S18
-K02965 RP-S19; small subunit ribosomal protein S19
-K02968 RP-S20; small subunit ribosomal protein S20
-K02970 RP-S21; small subunit ribosomal protein S21
 # Large subunit 
 SAOUHSC_00519 rplA; 50S ribosomal protein L1
 SAOUHSC_02509 rplB; 50S ribosomal protein L2
@@ -81,58 +60,17 @@ SAOUHSC_03055 rpmH; 50S ribosomal protein L34
 SAOUHSC_01785 rpmI; 50S ribosomal protein L35
 SAOUHSC_02488 rpmJ; 50S ribosomal protein L36
 SAOUHSC_00526 50S ribosomal protein L7Ae-like protein
-K02863 RP-L1; large subunit ribosomal protein L1
-K02886 RP-L2; large subunit ribosomal protein L2
-K02906 RP-L3; large subunit ribosomal protein L3
-K02926 RP-L4; large subunit ribosomal protein L4
-K02931 RP-L5; large subunit ribosomal protein L5
-K02933 RP-L6; large subunit ribosomal protein L6
-K02935 RP-L7; large subunit ribosomal protein L7/L12
-K02939 RP-L9; large subunit ribosomal protein L9
-K02864 RP-L10; large subunit ribosomal protein L10
-K02867 RP-L11; large subunit ribosomal protein L11
-K02871 RP-L13; large subunit ribosomal protein L13
-K02874 RP-L14; large subunit ribosomal protein L14
-K02876 RP-L15; large subunit ribosomal protein L15
-K02878 RP-L16; large subunit ribosomal protein L16
-K02879 RP-L17; large subunit ribosomal protein L17
-K02881 RP-L18; large subunit ribosomal protein L18
-K02884 RP-L19; large subunit ribosomal protein L19
-K02887 RP-L20; large subunit ribosomal protein L20
-K02888 RP-L21; large subunit ribosomal protein L21
-K02890 RP-L22; large subunit ribosomal protein L22
-K02892 RP-L23; large subunit ribosomal protein L23
-K02895 RP-L24; large subunit ribosomal protein L24
-K02897 RP-L25; large subunit ribosomal protein L25
-K02899 RP-L27; large subunit ribosomal protein L27
-K02902 RP-L28; large subunit ribosomal protein L28
-K02904 RP-L29; large subunit ribosomal protein L29
-K02907 RP-L30; large subunit ribosomal protein L30
-K02909 RP-L31; large subunit ribosomal protein L31
-K02913 RP-L33; large subunit ribosomal protein L33
-K02913 RP-L33; large subunit ribosomal protein L33
-K02914 RP-L34; large subunit ribosomal protein L34
-K02916 RP-L35; large subunit ribosomal protein L35
-K02919 RP-L36; large subunit ribosomal protein L36
-K07590 RP-L7A; large subunit ribosomal protein L7A
 ##### Translation factors 
 ### Prokaryotic type  
 # Initiation factors 
 SAOUHSC_02489 infA; translation initiation factor IF-1
 SAOUHSC_01246 infB; translation initiation factor IF-2
 SAOUHSC_01786 infC; translation initiation factor IF-3
-K02518 infA; translation initiation factor IF-1
-K02519 infB; translation initiation factor IF-2
-K02520 infC; translation initiation factor IF-3
 # Elongation factors 
 SAOUHSC_01234 tsf; elongation factor Ts
 SAOUHSC_00530 tuf; elongation factor Tu
 SAOUHSC_00529 fusA; elongation factor G
 SAOUHSC_01625 elongation factor P
-K02357 tsf; elongation factor Ts
-K02358 tuf; elongation factor Tu
-K02355 fusA; elongation factor G
-K02356 efp; elongation factor P
 # Release factors 
 SAOUHSC_02359 prfA; peptide chain release factor 1
 SAOUHSC_00771 peptide chain release factor 2
@@ -140,24 +78,12 @@ SAOUHSC_00956 prfC; peptide chain release factor 3
 SAOUHSC_01236 frr; ribosome recycling factor
 SAOUHSC_02358 HemK family modification methylase
 SAOUHSC_00475 peptidyl-tRNA hydrolase
-K02835 prfA; peptide chain release factor 1
-K02836 prfB; peptide chain release factor 2
-K02837 prfC; peptide chain release factor 3
-K02838 frr; ribosome recycling factor
-K02493 hemK; release factor glutamine methyltransferase [EC:2.1.1.297]
-K01056 PTH1; peptidyl-tRNA hydrolase, PTH1 family [EC:3.1.1.29]
 ##### Ribosome Biogenesis 
 ### Prokaryotic type  
-# Sno RNPs
-Box C/D snoRNPs
-Box H/ACA snoRNPs
 # rRNA transcription factors
 SAOUHSC_01243 nusA; transcription elongation factor NusA
 SAOUHSC_01621 nusB; transcription antitermination protein NusB
 SAOUHSC_00517 transcription antitermination protein
-K02600 nusA; transcription termination/antitermination protein NusA
-K03625 nusB; transcription antitermination protein NusB
-K02601 nusG; transcription termination/antitermination protein NusG
 # rRNA modification factors
 SAOUHSC_01870 16S rRNA pseudouridine(516) synthase
 SAOUHSC_00464 ksgA; dimethyladenosine transferase
@@ -168,24 +94,6 @@ SAOUHSC_01680 16S rRNA (uracil(1498)-N(3))-methyltransferase
 SAOUHSC_03051 gidB; 16S rRNA methyltransferase GidB
 SAOUHSC_01143 mraW; 16S rRNA (cytosine(1402)-N(4))-methyltransferase
 SAOUHSC_00459 hypothetical protein
-K06183 rsuA; 16S rRNA pseudouridine516 synthase [EC:5.4.99.19]
-K02528 ksgA; 16S rRNA (adenine1518-N6/adenine1519-N6)-dimethyltransferase [EC:2.1.1.182]
-K03500 rsmB; 16S rRNA (cytosine967-C5)-methyltransferase [EC:2.1.1.176]
-K00564 rsmC; 16S rRNA (guanine1207-N2)-methyltransferase [EC:2.1.1.172]
-K08316 rsmD; 16S rRNA (guanine966-N2)-methyltransferase [EC:2.1.1.171]
-K09761 rsmE; 16S rRNA (uracil1498-N3)-methyltransferase [EC:2.1.1.193]
-K03501 gidB; 16S rRNA (guanine527-N7)-methyltransferase [EC:2.1.1.170]
-K03438 mraW; 16S rRNA (cytosine1402-N4)-methyltransferase [EC:2.1.1.199]
-K07056 rsmI; 16S rRNA (cytidine1402-2'-O)-methyltransferase [EC:2.1.1.198]
-K03218 rlmB; 23S rRNA (guanosine2251-2'-O)-methyltransferase [EC:2.1.1.185]
-K00783 rlmH; 23S rRNA (pseudouridine1915-N3)-methyltransferase [EC:2.1.1.177]
-K06969 rlmI; 23S rRNA (cytosine1962-C5)-methyltransferase [EC:2.1.1.191]
-K06941 rlmN; 23S rRNA (adenine2503-C2)-methyltransferase [EC:2.1.1.192]
-K03215 rumA; 23S rRNA (uracil1939-C5)-methyltransferase [EC:2.1.1.190]
-K06178 rluB; 23S rRNA pseudouridine2605 synthase [EC:5.4.99.22]
-K06180 rluD; 23S rRNA pseudouridine1911/1915/1917 synthase [EC:5.4.99.23]
-K06180 rluD; 23S rRNA pseudouridine1911/1915/1917 synthase [EC:5.4.99.23]
-K06180 rluD; 23S rRNA pseudouridine1911/1915/1917 synthase [EC:5.4.99.23]
 SAOUHSC_00513 23S rRNA (guanosine(2251)-2'-O)-methyltransferase RlmB
 SAOUHSC_00027 23S rRNA (pseudouridine(1915)-N(3))-methyltransferase RlmH
 SAOUHSC_01026 hypothetical protein
@@ -196,34 +104,18 @@ SAOUHSC_00944 hypothetical protein
 SAOUHSC_01163 hypothetical protein
 SAOUHSC_01982 ribosomal large subunit pseudouridine s
 # ribosomal protein modification factors
-K03789 rimI; [ribosomal protein S18]-alanine N-acetyltransferase [EC:2.3.1.266]
-K03817 rimL; ribosomal-protein-serine acetyltransferase [EC:2.3.1.-]
-K02860 rimM; 16S rRNA processing protein RimM
-K02687 prmA; ribosomal protein L11 methyltransferase [EC:2.1.1.-]
 SAOUHSC_02278 ribosomal-protein-alanine acetyltransferase
 SAOUHSC_00324 50S ribosomal protein L7 serine acetyltransferase
 SAOUHSC_01209 rimM; 16S rRNA-processing protein RimM
 SAOUHSC_01681 prmA; ribosomal protein L11 methyltransfe
 # rRNA processing factors
-K03685 rnc; ribonuclease III [EC:3.1.26.3]
-K07447 ruvX; putative pre-16S rRNA nuclease [EC:3.1.-.-]
-K11145 mrnC; mini-ribonuclease III [EC:3.1.26.-]
 SAOUHSC_01203 rnc; ribonuclease III
 SAOUHSC_01720 Holliday junction resolvase-like protein
 SAOUHSC_00512 hypothetical protein
 # rRNA helicases 
-K05592 deaD; ATP-dependent RNA helicase DeaD [EC:5.6.2.7]
-K18692 cshB; ATP-dependent RNA helicase CshB [EC:5.6.2.7]
 SAOUHSC_02316 DEAD-box ATP dependent DNA helicase
 SAOUHSC_01659 hypothetical protein
 # GTPases 
-K03595 era; GTPase
-K06949 rsgA; ribosome biogenesis GTPase / thiamine phosphate phosphatase [EC:3.6.1.- 3.1.3.100]
-K03977 engA; GTPase
-K03979 obgE; GTPase [EC:3.6.5.-]
-K14540 rbgA; ribosome biogenesis GTPase A
-K03665 hflX; GTPase
-K06948 yqeH; 30S ribosome assembly GTPase
 SAOUHSC_01668 era; GTP-binding protein Era
 SAOUHSC_01188 hypothetical protein
 SAOUHSC_01492 engA; GTP-binding protein EngA
@@ -232,17 +124,6 @@ SAOUHSC_01214 rbgA; ribosomal biogenesis GTPase
 SAOUHSC_01283 hypothetical protein
 SAOUHSC_01700 GTP-binding protein YqeH
 # Other maturation factors
-K07566 tsaC; L-threonylcarbamoyladenylate synthase [EC:2.7.7.87]
-K01139 spoT; GTP diphosphokinase / guanosine-3',5'-bis(diphosphate) 3'-diphosphatase [EC:2.7.6.5 3.1.7.2]
-K02834 rbfA; ribosome-binding factor A
-K09748 rimP; ribosome maturation factor RimP
-K14761 rlbA; ribosome-associated protein
-K09710 ybeB; ribosome-associated protein
-K07042 ybeY; probable rRNA maturation factor
-K07574 yhbY; RNA-binding protein
-K05808 hpf; ribosome hibernation promoting factor
-K06942 ychF; ribosome-binding ATPase
-K07040 yceD; DUF177 domain-containing protein
 SAOUHSC_02357 hypothetical protein
 SAOUHSC_01742 GTP pyrophosphokinase
 SAOUHSC_01247 rbfA; ribosome-binding factor A
@@ -261,12 +142,6 @@ SAOUHSC_03054 rnpA; ribonuclease P
 # 3'processing and CCA adding factors
 SAOUHSC_01598 AtsA/ElaC family protein
 SAOUHSC_01474 tRNA CCA-pyrophosphorylase
-# tRNA spricing factors
-tRNA splicing endonucleases
-tRNA splicing ligases
-Other tRNA splicing factors
-# tRNA transport factors
-tRNA export factors
 # Aminoacyl-tRNA synthetases (AARSs)
 SAOUHSC_01875 leuS; leucyl-tRNA synthetase
 SAOUHSC_01240 prolyl-tRNA synthetase
