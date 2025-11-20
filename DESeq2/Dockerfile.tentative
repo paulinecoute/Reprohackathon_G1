@@ -1,0 +1,48 @@
+FROM debian:stretch
+
+# System dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    ca-certificates \
+    build-essential \
+    gfortran \
+    libreadline-dev \
+    libx11-dev \
+    libxt-dev \
+    libbz2-dev \
+    liblzma-dev \
+    libpcre3-dev \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install R 3.4.1 from source
+RUN wget https://cran.r-project.org/src/base/R-3/R-3.4.1.tar.gz && \
+    tar -xzf R-3.4.1.tar.gz && \
+    cd R-3.4.1 && \
+    ./configure --enable-R-shlib && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && rm -rf R-3.4.1* 
+
+# Bioconductor 3.5 repos (frozen)
+RUN echo 'options(repos = c( \
+        CRAN="https://cran.r-project.org", \
+        BioCsoft="https://bioconductor.org/packages/3.5/bioc", \
+        BioCann="https://bioconductor.org/packages/3.5/data/annotation", \
+        BioCexp="https://bioconductor.org/packages/3.5/data/experiment" ))' \
+        > /usr/local/lib/R/etc/Rprofile.site
+
+# Install BiocInstaller manually
+RUN wget https://bioconductor.org/packages/3.5/bioc/src/contrib/BiocInstaller_1.26.1.tar.gz && \
+    R CMD INSTALL BiocInstaller_1.26.1.tar.gz && \
+    rm BiocInstaller_1.26.1.tar.gz
+
+# Install DESeq2 version 1.16.1
+RUN wget https://bioconductor.org/packages/3.5/bioc/src/contrib/DESeq2_1.16.1.tar.gz && \
+    R CMD INSTALL DESeq2_1.16.1.tar.gz && \
+    rm DESeq2_1.16.1.tar.gz
+
+CMD ["R"]
