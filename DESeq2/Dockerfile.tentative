@@ -1,6 +1,17 @@
-FROM debian:stretch
+FROM debian:stretch                                                             
 
-# System dependencies
+# Fix apt sources for Debian Stretch (now archived)
+RUN sed -i '/stretch-updates/d' /etc/apt/sources.list && \
+    sed -i 's|deb.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
+    sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
+    printf "Acquire::Check-Valid-Until \"false\";\nAcquire::AllowInsecureRepositories \"true\";\n" \
+       > /etc/apt/apt.conf.d/99archive && \
+    apt-get update || apt-get update
+
+
+##############################################
+# System dependencies required for building R
+##############################################
 RUN apt-get update && apt-get install -y \
     wget \
     ca-certificates \
@@ -18,31 +29,49 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
+##############################################
 # Install R 3.4.1 from source
+##############################################
 RUN wget https://cran.r-project.org/src/base/R-3/R-3.4.1.tar.gz && \
     tar -xzf R-3.4.1.tar.gz && \
     cd R-3.4.1 && \
     ./configure --enable-R-shlib && \
     make -j$(nproc) && \
     make install && \
-    cd .. && rm -rf R-3.4.1* 
+    cd .. && rm -rf R-3.4.1*
 
-# Bioconductor 3.5 repos (frozen)
+##############################################
+# Extra system dependencies required by DESeq2
+# (ggplot2, Hmisc, geneplotter, cairo, etc.)
+##############################################
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libcairo2-dev \
+    libtiff5-dev \
+    libicu-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+##############################################
+# Configure Bioconductor 3.5 repos (frozen)
+##############################################
 RUN echo 'options(repos = c( \
         CRAN="https://cran.r-project.org", \
         BioCsoft="https://bioconductor.org/packages/3.5/bioc", \
         BioCann="https://bioconductor.org/packages/3.5/data/annotation", \
-        BioCexp="https://bioconductor.org/packages/3.5/data/experiment" ))' \
-        > /usr/local/lib/R/etc/Rprofile.site
+        BioCexp="https://bioconductor.org/packages/3.5/data/experiment" \
+    ))' > /usr/local/lib/R/etc/Rprofile.site
 
-# Install BiocInstaller manually
+##############################################
+# Install BiocInstaller (Bioconductor 3.5)
+##############################################
 RUN wget https://bioconductor.org/packages/3.5/bioc/src/contrib/BiocInstaller_1.26.1.tar.gz && \
     R CMD INSTALL BiocInstaller_1.26.1.tar.gz && \
     rm BiocInstaller_1.26.1.tar.gz
 
-# Install DESeq2 version 1.16.1
-RUN wget https://bioconductor.org/packages/3.5/bioc/src/contrib/DESeq2_1.16.1.tar.gz && \
-    R CMD INSTALL DESeq2_1.16.1.tar.gz && \
-    rm DESeq2_1.16.1.tar.gz
+##############################################
+# Install DESeq2 1.16.1 (with full dependency resolution)
+##############################################
+RUN R -e "library(BiocInstaller); biocLite('DESeq2', ask=FALSE)"
 
 CMD ["R"]
