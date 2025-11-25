@@ -1,0 +1,7 @@
+# Snakefile 2 : Construction des figures 
+# mis à jour le 25.11
+# en attente docker Ange-Louis
+
+# Appel du script R Figures (2 plots de l'article et volcano plot) et du script Correlation
+
+# J'ai déjà la structure du code il me faut juste tous les scripts R pour les fusionner et lancer le test de ce snakefile là
