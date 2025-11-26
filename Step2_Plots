@@ -1,7 +1,35 @@
-# Snakefile 2 : Construction des figures 
+# Snakefile 2 : Construction des figures
 # mis à jour le 25.11
-# en attente docker Ange-Louis
 
-# Appel du script R Figures (2 plots de l'article et volcano plot) et du script Correlation
+container_default = "docker://paulinecoute/deseq:latest"
 
-# J'ai déjà la structure du code il me faut juste tous les scripts R pour les fusionner et lancer le test de ce snakefile là
+rule all:
+    input:
+        "correlation/correlation.txt",
+        "figures/volcanoplot.png"
+
+
+rule run_correlation:
+    output:
+        "correlation/correlation.txt"
+    container:
+        container_default
+    shell:
+        r"""
+        mkdir -p correlation
+        Rscript Correlation.R
+        """
+
+
+rule run_figures:
+    input:
+        corr = "correlation/correlation.txt"
+    output:
+        "figures/volcanoplot.png"
+    container:
+        container_default
+    shell:
+        r"""
+        mkdir -p figures
+        Rscript Figures.R
+        """

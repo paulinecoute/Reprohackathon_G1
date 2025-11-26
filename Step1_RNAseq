@@ -115,6 +115,6 @@ rule count_reads:
     shell:
         r"""
         mkdir -p {count_directory}
-        featureCounts -t gene -g ID -F GFF -T {params.threads} \
+        featureCounts -t gene -g ID -s 1 -F GFF -T {params.threads} \
             -a {input.gff} -o {output} {mapping_directory}/*.bam
         """

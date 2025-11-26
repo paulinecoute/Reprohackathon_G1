@@ -1,0 +1,29 @@
+FROM rocker/tidyverse:3.4.1
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# System dependencies needed for old DESeq2 (Bioconductor 3.5)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gfortran \
+    libxml2-dev \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    zlib1g-dev \
+    libblas-dev \
+    liblapack-dev \
+    libpcre3-dev \
+    libxt-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Old RcppArmadillo required by DESeq2 1.16.1
+RUN R -q -e "install.packages('https://cran.r-project.org/src/contrib/Archive/RcppArmadillo/RcppArmadillo_0.7.700.0.0.tar.gz', repos=NULL, type='source')"
+
+# locfit required by DESeq2 1.16.1
+RUN R -q -e "install.packages('https://cran.r-project.org/src/contrib/Archive/locfit/locfit_1.5-9.1.tar.gz', repos=NULL, type='source')"
+
+# Bioconductor 3.5 installer
+RUN R -q -e "install.packages('BiocInstaller', repos='https://bioconductor.org/packages/3.5/bioc')"
+
+# Install DESeq2 1.16.1
+RUN R -q -e "library(BiocInstaller); biocLite('DESeq2', suppressUpdates=TRUE, ask=FALSE)"
