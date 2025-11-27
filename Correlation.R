@@ -11,7 +11,7 @@
 
 ##########################################################################
 
-dir.create("correlation")
+dir.create("reports")
 
 # The two count tables use different formats, so we first harmonize them
 
