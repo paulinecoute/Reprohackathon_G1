@@ -1,9 +1,16 @@
 FROM rocker/tidyverse:3.4.1
 
+# Fix Debian Stretch archived repositories
+RUN sed -i '/stretch-updates/d' /etc/apt/sources.list && \
+    sed -i 's|deb.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
+    sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
+    printf "Acquire::Check-Valid-Until \"false\";\nAcquire::AllowInsecureRepositories \"true\";\n" \
+    > /etc/apt/apt.conf.d/99archive
+
 ENV DEBIAN_FRONTEND=noninteractive
 
-# System dependencies needed for old DESeq2 (Bioconductor 3.5)
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# System dependencies needed for old DESeq2
+RUN apt-get update && apt-get install -y --no-install-recommends --allow-unauthenticated \
     build-essential \
     gfortran \
     libxml2-dev \
@@ -25,5 +32,6 @@ RUN R -q -e "install.packages('https://cran.r-project.org/src/contrib/Archive/lo
 # Bioconductor 3.5 installer
 RUN R -q -e "install.packages('BiocInstaller', repos='https://bioconductor.org/packages/3.5/bioc')"
 
-# Install DESeq2 1.16.1
+# Install DESeq2
 RUN R -q -e "library(BiocInstaller); biocLite('DESeq2', suppressUpdates=TRUE, ask=FALSE)"
+

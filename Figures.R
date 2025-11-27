@@ -26,6 +26,7 @@ dds=DESeq(dds)
 res=results(dds)
 
 # MA plot de l'ensemble des gènes 
+png("figures/MAplot_all.png", width = 600, height = 500)
 
 plot(
   x = res$baseMean,
@@ -34,19 +35,18 @@ plot(
   pch = 20,
   cex = 0.5,
   col = ifelse(res$padj < 0.05, "red", "black"),
-  xlab = "Mean of normalized counts", #log scale
+  xlab = "Mean of normalized counts",
   ylab = "Log2 fold change",
   main = "MA-plot of complete RNA-seq dataset",
   ylim = c(-4, 4),
-  xaxt = "n"  # empêche le tracé automatique de l’axe x
+  xaxt = "n"
 )
 
 # Mêmes axes / ligne horizontale que les auteurs 
 axis(1, at = c(1, 100, 10000), labels = expression(10^0, 10^2, 10^4))
 abline(h = 0, col = "black", lty = 2)
-
-dev.copy(png, filename = "figures/MAplot_all.png", width = 600, height = 500) # dimensions qui se rapporchent de celles des auteurs 
 dev.off()
+
 
 # MA plot des gènes impliqués dans la traduction 
 
@@ -58,6 +58,8 @@ res_translation = res[res$GeneID %in% translation_ids, ] # on sélectionne les g
 genestranslation <- res_translation$GeneID # liste des gènes de la traduction
 cat("Nombre de gènes impliqués dans la traduction présents dans notre table de comptage : ", nrow(res_translation), "\n") #172
 log2_baseMean=log2(res_translation$baseMean + 1) # baseMean transformé en log2
+
+png("figures/MAplot_translation.png", width = 400, height = 400)
 
 plot(
   x = log2_baseMean,
@@ -148,7 +150,6 @@ points(
 usr=par("usr") 
 legend(x = usr[2] - 10,  y = usr[3] + 1,legend = c("AA-tRNA synthetase"),pch = 21,pt.bg = "grey",col = "black",lwd = 1.5,pt.cex = 1,bty = "n",cex = 0.8 )
 
-dev.copy(png, filename = "figures/MAplot_translation.png", width = 400, height = 400)
 dev.off()
 
 ## Volcano plots 
