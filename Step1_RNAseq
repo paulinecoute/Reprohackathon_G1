@@ -1,11 +1,5 @@
-# Snakefile 
-# mis à jour le 06.11
-# les images docker doivent avoir été construites en amont
-
-
 SRR = ["SRR10379721", "SRR10379722", "SRR10379723", "SRR10379724", "SRR10379725", "SRR10379726"]
 
-# Dossiers pour mettre les données au fur et à mesure de l'analyse
 raw_directory = "data_raw"
 trimmed_directory = "data_trimmed"
 reference_directory = "reference"
@@ -16,9 +10,9 @@ rule all:
     input:
         f"{count_directory}/counts.txt"
 
-# Première étape : Téléchargement des fastq
-# Utilisation de Dockerfile
+# Basic steps of an RNA-seq analysis
 
+# Step 1: Download and compress FASTQ files
 rule download_and_compress:
     output: f"{raw_directory}/{{srr}}.fastq.gz"
     params: threads = 4
@@ -32,9 +26,7 @@ rule download_and_compress:
         pigz -p {params.threads} {wildcards.srr}.fastq
         """
 
-# Deuxième étape : Trimming
-# Utilisation de Dockerfile.trim        
-
+# Step 2: Trim low-quality reads
 rule trim_reads:
     input:
         fastq = f"{raw_directory}/{{srr}}.fastq.gz"
@@ -51,9 +43,7 @@ rule trim_reads:
         trim_galore -q {params.quality} --phred33 --length {params.length} ../{input.fastq}
         """
 
-# Troisème étape : téléchargement du génome de référence et de ses annotations
-# De base je ne voulais pas utiliser de dockerfile mais sur mon pc wget ne fonctionne pas 
-
+# Step 3: Download reference genome and annotations
 rule download_reference:
     output:
         fasta = f"{reference_directory}/reference.fasta",
@@ -67,9 +57,7 @@ rule download_reference:
         wget -q -O reference.gff "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&id=CP000253.1&report=gff3&format=text"
         """
 
-# Quatrième étape : indexaction
-# Docker.bowtie
-
+# Step 4: Build Bowtie index
 rule build_index:
     input:
         fasta = f"{reference_directory}/reference.fasta"
@@ -79,8 +67,7 @@ rule build_index:
     shell:
         "cd {reference_directory} && bowtie-build reference.fasta reference"
 
-# Cinquième étape : mapping
-# Docker.bowtie (c'est le même que pour celui d'avant)
+# Step 5: Map trimmed reads to the reference genome
 rule mapping:
     input:
         fastq = f"{trimmed_directory}/{{srr}}_trimmed.fq.gz",
@@ -101,9 +88,7 @@ rule mapping:
         samtools index {output.bam}
         """
 
-# Sixième étape : comptage des reads 
-# Docker.featurecounts
-
+# Step 6: Count reads per gene using featureCounts
 rule count_reads:
     input:
         gff = f"{reference_directory}/reference.gff",
