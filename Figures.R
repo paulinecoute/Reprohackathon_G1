@@ -1,31 +1,51 @@
-# Reproduction des figures de l'article : 
-# MA plot sur tous les gènes
-# MA plot sur les gènes impliqués dans la traduction 
+##########################################################################
 
-# un volcano plot est également effectué 
+# Differential expression analysis from the gene count table using DESeq2
+# Computation of the number of up- and down-regulated genes
+# Generation of figures: MA plots and volcano plots
 
-# Inputs 
-# Table de comptage data_counts/counts.txt 
-# Liste des gènes impliqués dans la traduction : others/genes_translation.txt
+# Inputs
+# Gene count table: data_counts/counts.txt
+# List of genes involved in translation: others/genes_translation.txt
 
-dir.create("figures") # dossier dans lequel seront mises les figures
+# Outputs 
+# All figures are saved in the "figures" directory
+# Differential analysis report saved in "reports"
 
-# Chargement et Préparation de notre table 
+##########################################################################
+
+dir.create("figures") 
+
+# Load and format the gene count table
+
 count_data=read.table("data_counts/counts.txt", header = TRUE, row.names = 1)
-
-# Garder seulement les colonnes de comptage (pas Chr, Start, etc.)
-count_data=count_data[ , 6:ncol(count_data) ] # supression des colonnes Chr Start End Strand Length
-metadata=data.frame(condition = factor(c(rep("Control", 3), rep("Treated", 3)))) # ajout des conditions
+count_data=count_data[ , 6:ncol(count_data) ] 
+metadata=data.frame(condition = factor(c(rep("Treated", 3), rep("Control", 3)))) 
 rownames(metadata)=colnames(count_data)
-metadata$condition = relevel(metadata$condition, ref = "Treated") # fixation de la référence
+metadata$condition = relevel(metadata$condition, ref = "Control") 
 
-# DESeq2 
+# Differential Analysis with DESeq2 
+
 library(DESeq2)
 dds=DESeqDataSetFromMatrix(countData = count_data, colData = metadata, design = ~ condition)
 dds=DESeq(dds)
 res=results(dds)
+genes_up = rownames(res[ res$padj < 0.05 & res$log2FoldChange > 0 , ])
+genes_down = rownames(res[ res$padj < 0.05 & res$log2FoldChange < 0 , ])
+genes_ns = rownames(res[ is.na(res$padj) | res$padj >= 0.05 , ])
 
-# MA plot de l'ensemble des gènes 
+dir.create("reports")
+sink("reports/diff_analysis.txt")
+cat("List of UP-regulated genes:\n")
+print(genes_up)
+cat("\nList of DOWN-regulated genes:\n")
+print(genes_down)
+cat("\nList of non-significant genes:\n")
+print(genes_ns)
+sink()
+
+# MA plots: all genes and genes involved in translation
+
 png("figures/MAplot_all.png", width = 600, height = 500)
 
 plot(
@@ -42,22 +62,33 @@ plot(
   xaxt = "n"
 )
 
-# Mêmes axes / ligne horizontale que les auteurs 
 axis(1, at = c(1, 100, 10000), labels = expression(10^0, 10^2, 10^4))
 abline(h = 0, col = "black", lty = 2)
+
 dev.off()
 
-
-# MA plot des gènes impliqués dans la traduction 
-
-# Chargement et Préparation du fichier avec les noms des gènes de la traduction 
+# Load and format the gene involved in translation table
 translation=scan( "others/genes_translation.txt",what = "character", comment.char = "#", quiet = TRUE)
-translation_ids = translation[grepl("^SAOUHSC_", translation)] # valides, sans les com etc c'est juste une vérification supplémentaire 
-res$GeneID = sub("^gene-", "", rownames(res))  # enlever "gene-" de l'ID
-res_translation = res[res$GeneID %in% translation_ids, ] # on sélectionne les gènes présents dans notre table de comptage
-genestranslation <- res_translation$GeneID # liste des gènes de la traduction
-cat("Nombre de gènes impliqués dans la traduction présents dans notre table de comptage : ", nrow(res_translation), "\n") #172
-log2_baseMean=log2(res_translation$baseMean + 1) # baseMean transformé en log2
+translation_ids = translation[grepl("^SAOUHSC_", translation)] 
+res$GeneID = sub("^gene-", "", rownames(res))  
+res_translation = res[res$GeneID %in% translation_ids, ] 
+genestranslation = res_translation$GeneID 
+log2_baseMean=log2(res_translation$baseMean + 1) 
+translation_up = res_translation$GeneID[ res_translation$padj < 0.05 & res_translation$log2FoldChange > 0 ]
+translation_down = res_translation$GeneID[ res_translation$padj < 0.05 & res_translation$log2FoldChange < 0 ]
+translation_ns = res_translation$GeneID[ is.na(res_translation$padj) | res_translation$padj >= 0.05 ]
+
+sink("reports/translation.txt")
+cat("Number of translation-related genes found in the count table: ", nrow(res_translation), "\n\n")
+cat("List of ALL translation-related genes detected:\n")
+print(genestranslation)
+cat("\nList of UP-regulated translation genes:\n")
+print(translation_up)
+cat("\nList of DOWN-regulated translation genes:\n")
+print(translation_down)
+cat("\nList of non-significant translation genes:\n")
+print(translation_ns)
+sink()
 
 png("figures/MAplot_translation.png", width = 400, height = 400)
 
@@ -76,39 +107,30 @@ plot(
   yaxt = "n"
 )
 
-# Mêmes axes / ligne horizontale / légende que les auteurs 
 axis(1, at = seq(0, 20, by = 2))
 axis(2, at = seq(-6, 5, by = 1))
 abline(h = 0, col = "black", lty = 2)
 legend("bottomleft",legend = c("Significant", "Non-significant"),col = c("red", "grey"),pch = 20,bty = "n",cex = 0.8)
 
-# Ajout du nom des quelques gènes présents sur le graphique des auteurs 
-
 translation_lines=readLines("others/genes_translation.txt")
 translation_data=translation_lines[grepl("^SAOUHSC_", translation_lines)]
 
-parsed_translation <- do.call(rbind, lapply(translation_data, function(line) {
-  parts <- strsplit(line, " ")[[1]]
-  locus_tag <- parts[1]
-  symbol <- gsub(";", "", parts[2])
+parsed_translation = do.call(rbind, lapply(translation_data, function(line) {
+  parts = strsplit(line, " ")[[1]]
+  locus_tag = parts[1]
+  symbol = gsub(";", "", parts[2])
   data.frame(locus_tag = locus_tag, symbol = symbol, stringsAsFactors = FALSE)
 }))
 
-target_symbols <- c("frr", "infA", "tsf", "infC", "infB", "pth") # gènes d'intérêts, présents sur la figure de l'article 
+target_symbols = c("frr", "infA", "tsf", "infC", "infB", "pth") # genes of interest (from the reference figure)
 genes_to_label = parsed_translation[parsed_translation$symbol %in% target_symbols, ]
-
-# NA si non trouvé 
+ 
 missing=setdiff(target_symbols, genes_to_label$symbol)
 if (length(missing) > 0) {
-  missing_df=data.frame(
-    locus_tag = NA,
-    symbol = missing,
-    stringsAsFactors = FALSE
-  )
+  missing_df=data.frame(locus_tag = NA,symbol = missing,stringsAsFactors = FALSE)
   genes_to_label=rbind(genes_to_label, missing_df)
 }
 
-# fusiion DESeq2 et annotation sur le graph
 annot=merge(as.data.frame(res_translation),genes_to_label,by.x = "GeneID",by.y = "locus_tag",all.y = TRUE)
 
 for (i in 1:nrow(annot)) {
@@ -119,11 +141,9 @@ for (i in 1:nrow(annot)) {
     text(x, y + 1.2, annot$symbol[i], cex = 0.9, font = 2)
     arrows(x0 = x, y0 = y + 1.1, x1 = x, y1 = y, length = 0.08)
   } else {
-    message("Gène non trouvé : ", annot$symbol[i])
+    message("Gene not found : ", annot$symbol[i])
   }
 }
-
-# Ajout des AA-tRNA synthetases sur le graphe
 
 aa_trna_lines = translation_lines[grepl("tRNA synthetase", translation_lines)]
 
@@ -136,7 +156,6 @@ aa_trna_data = do.call(rbind, lapply(aa_trna_lines, function(line) {
 
 res_translation$AA_tRNA = res_translation$GeneID %in% aa_trna_data$locus_tag
 
-# on ajoute une bordure noire sur ces points 
 points(
   x = log2(res_translation$baseMean[res_translation$AA_tRNA] + 1),
   y = res_translation$log2FoldChange[res_translation$AA_tRNA],
@@ -152,20 +171,15 @@ legend(x = usr[2] - 10,  y = usr[3] + 1,legend = c("AA-tRNA synthetase"),pch = 2
 
 dev.off()
 
-## Volcano plots 
+# Volcano plots: all genes and genes involved in translation 
 
-# Dataset propre
-res_df <- as.data.frame(res)
-res_df <- res_df[!is.na(res_df$padj), ]
+res_df = as.data.frame(res)
+res_df = res_df[!is.na(res_df$padj), ]
 
-# Comptage up/down
-sig <- res_df[res_df$padj < 0.05, ]
-up  <- sum(sig$log2FoldChange > 0)
-down <- sum(sig$log2FoldChange < 0)
+sig = res_df[res_df$padj < 0.05, ]
+up = sum(sig$log2FoldChange > 0)
+down = sum(sig$log2FoldChange < 0)
 
-##############
-# Volcano all
-##############
 png("figures/Volcano_all.png", width = 650, height = 500)
 
 with(res_df, plot(
@@ -185,21 +199,14 @@ abline(h = -log10(0.05), col = "darkgrey", lty = 2)
 
 dev.off()
 
-##############################
-# Prépa volcano translation
-##############################
-
-res_translation_df <- as.data.frame(res_translation)
-res_translation_df <- res_translation_df[!is.na(res_translation_df$padj), ]
+res_translation_df = as.data.frame(res_translation)
+res_translation_df = res_translation_df[!is.na(res_translation_df$padj), ]
 
 # Top 10
-top10 <- res_translation_df[order(res_translation_df$padj), ][1:10, ]
-top10 <- merge(top10, parsed_translation, by.x = "GeneID", by.y = "locus_tag", all.x = TRUE)
-top10$label <- ifelse(is.na(top10$symbol), top10$GeneID, top10$symbol)
+top10 = res_translation_df[order(res_translation_df$padj), ][1:10, ]
+top10 = merge(top10, parsed_translation, by.x = "GeneID", by.y = "locus_tag", all.x = TRUE)
+top10$label = ifelse(is.na(top10$symbol), top10$GeneID, top10$symbol)
 
-###########################
-# Volcano translation
-###########################
 png("figures/Volcano_translation.png", width = 500, height = 500)
 
 with(res_translation_df, plot(
@@ -218,7 +225,6 @@ with(res_translation_df, plot(
 abline(v = c(-1, 1), col = "darkgrey", lty = 2)
 abline(h = -log10(0.05), col = "darkgrey", lty = 2)
 
-# Labels top10
 for (i in 1:nrow(top10)) {
   x = top10$log2FoldChange[i]
   y = -log10(top10$padj[i])
@@ -226,7 +232,6 @@ for (i in 1:nrow(top10)) {
   arrows(x0 = x, y0 = y + 0.4, x1 = x, y1 = y, length = 0.08)
 }
 
-# Labels gènes d’intérêt (target_symbols)
 for (i in 1:nrow(genes_to_label)) {
   gene_id <- genes_to_label$locus_tag[i]
   row <- res_translation_df[res_translation_df$GeneID == gene_id, ]
@@ -238,7 +243,6 @@ for (i in 1:nrow(genes_to_label)) {
   }
 }
 
-# Points aa–tRNA synthetases
 points(
   x = res_translation_df$log2FoldChange[res_translation_df$AA_tRNA],
   y = -log10(res_translation_df$padj[res_translation_df$AA_tRNA]),
