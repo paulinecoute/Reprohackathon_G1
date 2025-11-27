@@ -1,15 +1,11 @@
-# Snakefile 2 : Construction des figures
-# mis à jour le 25.11
-
 rule all:
     input:
-        "correlation/correlation.txt",
+        "reports/correlation.txt",
         "figures/Volcano_translation.png"
-
 
 rule run_correlation:
     output:
-        "correlation/correlation.txt"
+        "reports/correlation.txt"
     container:
         "docker://paulinecoute/deseq:latest"
     shell:
@@ -17,10 +13,9 @@ rule run_correlation:
         Rscript Correlation.R
         """
 
-
 rule run_figures:
     input:
-        corr = "correlation/correlation.txt"
+        corr = "reports/correlation.txt"
     output:
         "figures/Volcano_translation.png"
     container:
