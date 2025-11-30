@@ -30,9 +30,10 @@ library(DESeq2)
 dds=DESeqDataSetFromMatrix(countData = count_data, colData = metadata, design = ~ condition)
 dds=DESeq(dds)
 res=results(dds)
-genes_up = rownames(res[ res$padj < 0.05 & res$log2FoldChange > 0 , ])
-genes_down = rownames(res[ res$padj < 0.05 & res$log2FoldChange < 0 , ])
+genes_up = rownames(res[ !is.na(res$padj) & res$padj < 0.05 & res$log2FoldChange > 0 , ])
+genes_down = rownames(res[ !is.na(res$padj) & res$padj < 0.05 & res$log2FoldChange < 0 , ])
 genes_ns = rownames(res[ is.na(res$padj) | res$padj >= 0.05 , ])
+
 
 sink("reports/diff_analysis.txt")
 cat("List of UP-regulated genes:\n")
@@ -89,7 +90,7 @@ cat("\nList of non-significant translation genes:\n")
 print(translation_ns)
 sink()
 
-png("figures/MAplot_translation.png", width = 400, height = 400)
+png("figures/MAplot_translation.png", width = 350, height = 400)
 
 plot(
   x = log2_baseMean,
