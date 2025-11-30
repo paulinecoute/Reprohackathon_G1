@@ -39,10 +39,11 @@ auth_common = authors[common_genes, ]
 cor_common = sapply(sample_order, function(sample) {cor(us_common[, sample], auth_common[, sample], method = "pearson")})
 
 sink("reports/correlation.txt")
-cat("Nombre de gènes dans notre table :", nb_genes_us, "\n")
-cat("Nombre de gènes dans la table auteurs :", nb_genes_auth, "\n")
-cat("Nombre de gènes en commun :", nb_common_genes, "\n")
-cat("Corrélation sur les gènes en commun :\n")
+cat("Number of genes in our table:", nb_genes_us, "\n")
+cat("Number of genes in the authors' table:", nb_genes_auth, "\n")
+cat("Number of shared genes:", nb_common_genes, "\n")
+cat("Correlation on shared genes:\n")
 print(cor_common)
 sink()
+
 
