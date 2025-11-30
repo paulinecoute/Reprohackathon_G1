@@ -124,7 +124,8 @@ parsed_translation = do.call(rbind, lapply(translation_data, function(line) {
 
 target_symbols = c("frr", "infA", "tsf", "infC", "infB", "pth") # genes of interest (from the reference figure)
 genes_to_label = parsed_translation[parsed_translation$symbol %in% target_symbols, ]
- 
+genes_to_label = rbind(genes_to_label,data.frame(locus_tag = "SAOUHSC_00475",symbol = "pth",stringsAsFactors = FALSE))
+
 missing=setdiff(target_symbols, genes_to_label$symbol)
 if (length(missing) > 0) {
   missing_df=data.frame(locus_tag = NA,symbol = missing,stringsAsFactors = FALSE)
@@ -133,15 +134,36 @@ if (length(missing) > 0) {
 
 annot=merge(as.data.frame(res_translation),genes_to_label,by.x = "GeneID",by.y = "locus_tag",all.y = TRUE)
 
+offsets = list(
+  pth  = c(dx = -1.6, dy = -1.6),   
+  frr  = c(dx = -1.6, dy =  1.6),   
+  infA = c(dx = -1.6, dy =  1.6),   
+  tsf  = c(dx =  1.6, dy =  1.6),   
+  infC = c(dx =  2.0, dy = -0.8),
+  infB = c(dx =  1.6, dy = -1.6)    
+)
+
 for (i in 1:nrow(annot)) {
+  
   if (!is.na(annot$GeneID[i])) {
-    x <- log2(annot$baseMean[i] + 1)
-    y <- annot$log2FoldChange[i]
     
-    text(x, y + 1.2, annot$symbol[i], cex = 0.9, font = 2)
-    arrows(x0 = x, y0 = y + 1.1, x1 = x, y1 = y, length = 0.08)
-  } else {
-    message("Gene not found : ", annot$symbol[i])
+    x = log2(annot$baseMean[i] + 1)
+    y = annot$log2FoldChange[i]
+    gene = annot$symbol[i]
+    
+    if (!(gene %in% names(offsets))) next
+    
+    dx = offsets[[gene]]["dx"]
+    dy = offsets[[gene]]["dy"]
+
+    xf = x + dx
+    yf = y + dy
+    xt = x + dx * 1.25
+    yt = y + dy * 1.25
+    
+    segments(x0 = x,  y0 = y,x1 = xf, y1 = yf,length = 0.10,angle = 20,lwd = 1.5)
+    
+    text(xt, yt,labels = gene,cex = 1, font = 2)
   }
 }
 
