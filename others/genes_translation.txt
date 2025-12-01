@@ -377,7 +377,7 @@ SAOUHSC_02350 F0F1 ATP synthase subunit A
 SAOUHSC_00891 cyclophilin-type peptidyl-prolyl cis-trans isomerase
 SAOUHSC_01972 protein export protein PrsA
 SAOUHSC_01100 thioredoxin
-##### https://www.kegg.jp/kegg-bin/get_htext#C177 : 09122 Translation
+##### https://www.kegg.jp/kegg-bin/get_htext?sao00001.keg : 09122 Translation
 SAOUHSC_R0001 16S Ribosomal RNA	
 SAOUHSC_R0002 16S Ribosomal RNA
 SAOUHSC_R0003 16S Ribosomal RNA
