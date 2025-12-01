@@ -34,6 +34,8 @@ nb_genes_auth = nrow(authors)
 
 common_genes = intersect(rownames(us), rownames(authors))
 nb_common_genes = length(common_genes)
+unique_us = setdiff(rownames(us), rownames(authors))
+unique_authors = setdiff(rownames(authors), rownames(us))
 us_common = us[common_genes, ]
 auth_common = authors[common_genes, ]
 cor_common = sapply(sample_order, function(sample) {cor(us_common[, sample], auth_common[, sample], method = "pearson")})
@@ -42,8 +44,13 @@ sink("reports/correlation.txt")
 cat("Number of genes in our table:", nb_genes_us, "\n")
 cat("Number of genes in the authors' table:", nb_genes_auth, "\n")
 cat("Number of shared genes:", nb_common_genes, "\n")
+cat("List of genes present only in our dataset:", unique_us, "\n")
+cat("List of genes present only in the authors' dataset:",unique_authors,"\n")
 cat("Correlation on shared genes:\n")
 print(cor_common)
+sink()
+
+
 sink()
 
 
