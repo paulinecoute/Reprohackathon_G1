@@ -81,7 +81,10 @@ translation_down = res_translation$GeneID[ res_translation$padj < 0.05 & res_tra
 translation_ns = res_translation$GeneID[ is.na(res_translation$padj) | res_translation$padj >= 0.05 ]
 
 sink("reports/translation.txt")
-cat("Number of translation-related genes found in the count table: ", nrow(res_translation), "\n\n")
+cat("Total translation-related genes detected: ", nrow(res_translation), "\n")
+cat("Number of UP-regulated translation genes: ", length(translation_up), "\n")
+cat("Number of DOWN-regulated translation genes: ", length(translation_down), "\n")
+cat("Number of non-significant translation genes: ", length(translation_ns), "\n\n")
 cat("List of ALL translation-related genes detected:\n")
 print(genestranslation)
 cat("\nList of UP-regulated translation genes:\n")
