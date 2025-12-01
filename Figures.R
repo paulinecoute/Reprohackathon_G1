@@ -34,8 +34,10 @@ genes_up = rownames(res[ !is.na(res$padj) & res$padj < 0.05 & res$log2FoldChange
 genes_down = rownames(res[ !is.na(res$padj) & res$padj < 0.05 & res$log2FoldChange < 0 , ])
 genes_ns = rownames(res[ is.na(res$padj) | res$padj >= 0.05 , ])
 
-
 sink("reports/diff_analysis.txt")
+cat("Number of UP-regulated genes: ", length(genes_up), "\n")
+cat("Number of DOWN-regulated genes: ", length(genes_down), "\n")
+cat("Number of non-significant genes: ", length(genes_ns), "\n\n")
 cat("List of UP-regulated genes:\n")
 print(genes_up)
 cat("\nList of DOWN-regulated genes:\n")
