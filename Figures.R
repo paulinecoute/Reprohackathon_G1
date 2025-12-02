@@ -285,3 +285,75 @@ legend("topright", legend = "AA-tRNA synthetase", pch = 21,
 
 dev.off()
 
+# Heatmap and boxplots for regulated translation genes
+
+library(pheatmap)
+library(reshape2)
+library(ggplot2)
+
+
+norm_counts = counts(dds, normalized = TRUE)
+norm_log = log2(norm_counts + 1)
+sig_translation = res_translation[!is.na(res_translation$padj) & res_translation$padj < 0.05, ]
+genes_sig_ids = sig_translation$GeneID
+genes_sig_full = paste0("gene-", genes_sig_ids)
+genes_sig_full = genes_sig_full[genes_sig_full %in% rownames(norm_log)]
+mat = norm_log[genes_sig_full, , drop = FALSE]
+
+png("figures/Heatmap_translation_sig.png", width = 700, height = 600)
+pheatmap(
+  mat,
+  annotation_col = metadata,
+  scale = "row",
+  clustering_method = "ward.D2",
+  show_rownames = FALSE,
+  main = "Heatmap – Significant translation genes"
+)
+dev.off()
+
+
+genes_up_ids   = sig_translation$GeneID[sig_translation$log2FoldChange > 0]
+genes_down_ids = sig_translation$GeneID[sig_translation$log2FoldChange < 0]
+genes_up_full   = paste0("gene-", genes_up_ids)
+genes_down_full = paste0("gene-", genes_down_ids)
+genes_up_full   = intersect(genes_up_full, rownames(norm_log))
+genes_down_full = intersect(genes_down_full, rownames(norm_log))
+
+
+get_df = function(gene_list, direction_label) {
+  if (length(gene_list) == 0) return(NULL)
+  
+  df = as.data.frame(t(norm_log[gene_list, , drop = FALSE]))
+  df$condition = metadata$condition
+  
+  df_m = melt(df, id.vars = "condition", variable.name = "gene", value.name = "expression")
+  df_m$direction = direction_label
+  return(df_m)
+}
+
+df_up = get_df(genes_up_full, "Up-regulated")
+df_down = get_df(genes_down_full, "Down-regulated")
+df_all = rbind(df_up, df_down)
+
+df_all$group = paste(df_all$direction, df_all$condition, sep = "_")
+
+# Order groups visually
+df_all$group = factor(df_all$group,levels = c("Up-regulated_Control","Up-regulated_Treated","Down-regulated_Control","Down-regulated_Treated"))
+
+png("figures/Boxplot_translation_sig.png", width = 650, height = 500)
+
+ggplot(df_all, aes(x = group, y = expression, fill = direction)) +
+  geom_boxplot(outlier.size = 0.8) +
+  scale_fill_manual(values = c("Up-regulated" = "#1f77b4", 
+                               "Down-regulated" = "#ff7f0e")) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 25, hjust = 1)) +
+  xlab("") +
+  ylab("Log2 normalized expression") +
+  ggtitle("Expression of translation genes – Up/Down × Control/Treated")
+
+dev.off()
+
+
+
+
