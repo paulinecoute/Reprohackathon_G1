@@ -35,3 +35,8 @@ RUN R -q -e "install.packages('BiocInstaller', repos='https://bioconductor.org/p
 # Install DESeq2
 RUN R -q -e "library(BiocInstaller); biocLite('DESeq2', suppressUpdates=TRUE, ask=FALSE)"
 
+# For Heatmap and boxplots 
+RUN R -q -e "install.packages(c('ggplot2','pheatmap'), repos='https://cran.r-project.org')"
+
+
+
